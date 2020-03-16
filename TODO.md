@@ -14,4 +14,5 @@
 - 
 
 - Add NetworkX compatibility and import/export options.
-
+- Node-specific alpha and beta, following Newman 2018.
+- Asymmetric networks (directed). 
