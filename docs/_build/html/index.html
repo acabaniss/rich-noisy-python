@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>rich_noisy documentation &#8212; rich_noisy 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-rich_noisy">
+<span id="rich-noisy-documentation"></span><h1>rich_noisy documentation<a class="headerlink" href="#module-rich_noisy" title="Permalink to this headline">¶</a></h1>
+<p>Implementation of Newman’s rich and noisy network inference algorithm.</p>
+<p>This package implements Mark Newman’s <a href="#id6"><span class="problematic" id="id1">[1]_</span></a> algorithm for inferring network
+structure from multiple (rich) error-prone (noisy) observations of network edges.</p>
+<p>In this package, these observations of node existence (and the total number of
+experiments or trials, either assuming a single set of experiments for all nodes
+or for each node-node combination individually) are taken as numpy arrays. The
+expectation-maximization algorithm then converges on the probability that each
+edge actually exists. This probability, as well as the estimated parameters,
+are then available for further network analysis or an assessment of reliability.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets">1</span></dt>
+<dd><p>Newman 2018, Network structure from rich but noisy data, Nature Physics 14, 542-545.</p>
+</dd>
+</dl>
+<dl class="function">
+<dt id="rich_noisy.abr_step">
+<code class="sig-prename descclassname">rich_noisy.</code><code class="sig-name descname">abr_step</code><span class="sig-paren">(</span><em class="sig-param">N</em>, <em class="sig-param">E</em>, <em class="sig-param">Q</em><span class="sig-paren">)</span><a class="headerlink" href="#rich_noisy.abr_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the expectation (abr) step of the EM algorithm.</p>
+<p>This variant assumes that the true-positive and false-postive rates are global,
+namely not node-specific.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> (<em>numpy.array</em>) – The number of times that each edge has been measured (i.e., the number
+of trials or experiments in which each edge could have been observed).</p></li>
+<li><p><strong>E</strong> (<em>numpy.array</em>) – The actual observed number of edges between every pair of nodes.</p></li>
+<li><p><strong>Q</strong> (<em>numpy.array</em>) – The current (algorithmically generated) estimate that each edge is
+actually present. Output of q_step.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em>) – The estimate of the true-positive rate.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – The estimate of the false-positive rate.</p></li>
+<li><p><strong>rho</strong> (<em>float</em>) – The estimate of network density, i.e. the probability of an edge existing
+between any two nodes chosen at random.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rich_noisy.false_discovery">
+<code class="sig-prename descclassname">rich_noisy.</code><code class="sig-name descname">false_discovery</code><span class="sig-paren">(</span><em class="sig-param">alpha</em>, <em class="sig-param">beta</em>, <em class="sig-param">rho</em><span class="sig-paren">)</span><a class="headerlink" href="#rich_noisy.false_discovery" title="Permalink to this definition">¶</a></dt>
+<dd><p>The false discovery rate.</p>
+<p>The false discovery rate is the probability that an observed edge is
+incorrectly identified, namely that is doesn’t exist in the ‘true’ network.
+This is one measure of how reliable the results are.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em>) – The estimate of the true-positive rate.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – The estimate of the false-positive rate.</p></li>
+<li><p><strong>rho</strong> (<em>float</em>) – The estimate of network density.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The false discovery rate (probability).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id3"><span class="brackets">1</span></dt>
+<dd><p>Newman, M.E.J. 2018. “Network structure from rich but noisy data.”
+Nature Physics 14 6 (June 1): 542–545. doi:10.1038/s41567-018-0076-1.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rich_noisy.q_step">
+<code class="sig-prename descclassname">rich_noisy.</code><code class="sig-name descname">q_step</code><span class="sig-paren">(</span><em class="sig-param">N</em>, <em class="sig-param">E</em>, <em class="sig-param">alpha</em>, <em class="sig-param">beta</em>, <em class="sig-param">rho</em><span class="sig-paren">)</span><a class="headerlink" href="#rich_noisy.q_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the maximization/q step of the EM algorithm.
+This variant assumes that the true-positive and false-postive rates are global.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> (<em>numpy.array</em>) – The number of times that each edge has been measured (i.e., the number
+of trials or experiments in which each edge could have been observed).</p></li>
+<li><p><strong>E</strong> (<em>numpy.array</em>) – The actual observed number of edges between every pair of nodes.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – The estimate of the true-positive rate.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – The estimate of the false-positive rate.</p></li>
+<li><p><strong>rho</strong> (<em>float</em>) – The estimate of network density, i.e. the probability of an edge existing
+between any two nodes chosen at random.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Q</strong> – The current (algorithmically generated) estimate that each edge is
+actually present.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rich_noisy.rich_noisy">
+<code class="sig-prename descclassname">rich_noisy.</code><code class="sig-name descname">rich_noisy</code><span class="sig-paren">(</span><em class="sig-param">N</em>, <em class="sig-param">E</em>, <em class="sig-param">tolerance=1e-06</em>, <em class="sig-param">seed=10</em><span class="sig-paren">)</span><a class="headerlink" href="#rich_noisy.rich_noisy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the Expectation-Maximization (EM) algorithm proposed in Newman 2018 <a href="#id7"><span class="problematic" id="id4">[1]_</span></a>.</p>
+<p>This algorithm takes as an input a matrix ‘E’ of times that an edge was observed
+to exist, as well as a matrix (or integer) ‘N’ of times that an edge was observed
+in general.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> (<em>int</em><em> or </em><em>numpy.array</em>) – <dl class="simple">
+<dt>Number of times that each edge has been measured (i.e., the number of</dt><dd><p>trials or experiments conducted to measure each edge or every edge).</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>E</strong> (<em>numpy.array</em>) – Number of times that each edge has been observed in those trials. Must
+be a symmetric matrix/undirected network (!)</p></li>
+<li><p><strong>tolerance</strong> (<em>float</em>) – Determines the tolerance in the variation of the alpha, beta, and rho
+parameters that is acceptable to stop iterating.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – The seed for numpy.random.seed .</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em>) – The estimate of the true-positive rate.</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – The estimate of the false-positive rate.</p></li>
+<li><p><strong>rho</strong> (<em>float</em>) – The estimate of network density.</p></li>
+<li><p><strong>Q</strong> (<em>numpy.array</em>) – Edge-by-edge estimates of edge existence probability.</p></li>
+<li><p><strong>iterations</strong> (<em>int</em>) – The number of iterations require to achieve the tolerance on the
+three parameters (alpha, beta, and rho).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This algorithm assumes that true-positive and false-positive rates are global,
+rather than local, properties. It also assumes that the network is undirected,
+or, alternatively, that the matrix is symmetric.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id5"><span class="brackets">1</span></dt>
+<dd><p>Newman, M.E.J. 2018. “Network structure from rich but noisy data.”
+Nature Physics 14 6 (June 1): 542–545. doi:10.1038/s41567-018-0076-1.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">rich_noisy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Cabaniss.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
