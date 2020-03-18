@@ -1,12 +1,12 @@
 import setuptools
 
 setuptools.setup(
-    name="rich_noisy",
+    name="richnoisy",
     version="0.1",
     author="Andrew Cabaniss",
     author_email="ahfc@umich.edu",
     description="Mark Newman's Rich Noisy Networks algorithm",
-    long_description="""This package implements Mark Newman's [1]_ algorithm for inferring network
+    long_description="""This package implements Mark Newman's (2018) algorithm for inferring network
 structure from multiple (rich) error-prone (noisy) observations of network edges.
 
 In this package, these observations of node existence (and the total number of
