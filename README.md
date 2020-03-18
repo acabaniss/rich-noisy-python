@@ -3,7 +3,7 @@ A Python implementation of the EM algorithm in Newman, M.E.J. 2018. “Network s
 
 ## Description ##
 
-rich_noisy takes a matrix of observed ties between nodes in a network and either a total number of trials where ties could be observed or a matrix describing how often each edge could have been observed. By iterating an expectation and a maximization step between estimates of generative parameters and probabilities of underlying similarity, it converges on a matrix of probabilities describing the likelihood of a "true" edge connecting every set of nodes, as well as a set of parameters defining the overall probability of similarity (rho), the true positive rate (alpha), and the false positive rate (beta).
+richnoisy takes a matrix of observed ties between nodes in a network and either a total number of trials where ties could be observed or a matrix describing how often each edge could have been observed. By iterating an expectation and a maximization step between estimates of generative parameters and probabilities of underlying similarity, it converges on a matrix of probabilities describing the likelihood of a "true" edge connecting every set of nodes, as well as a set of parameters defining the overall probability of similarity (rho), the true positive rate (alpha), and the false positive rate (beta).
 
 
 ## Notes ##
