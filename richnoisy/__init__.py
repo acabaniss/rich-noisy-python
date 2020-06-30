@@ -108,9 +108,9 @@ def q_step(N,E,alpha,beta,rho):
     #Step 1: loop through the upper triangle of the network to calculate new Q
     for j in range(1,n):
         for i in range(j):
-            p1 = rho*(alpha**E[i,j])*(1-alpha)**(N[i,j]-E[i,j])
-            p2 = (1-rho)*(beta**E[i,j])*(1-beta)**(N[i,j]-E[i,j])
-            Q[i,j] = p1*1./(p1+p2)
+            p1 = (rho*(alpha**E[i,j]))*((1-alpha)**(N[i,j]-E[i,j]))
+            p2 = ((1-rho)*(beta**E[i,j]))*((1-beta)**(N[i,j]-E[i,j]))
+            Q[i,j] = p1*1./(p1+p2*1.)
     #Step 2: return Q
     return (Q)
 
@@ -272,10 +272,32 @@ def false_discovery(alpha,beta,rho):
 #     return (q)
 
 if __name__ == '__main__':
-    test = np.genfromtxt('documents\\projects\\code\\test_RichNoisy.csv',delimiter=',')
+    test = np.genfromtxt('c:\\github\\rich-noisy-python\\data\\test_RichNoisy.csv',delimiter=',')
     test[0,0] = 0
+    n_test = np.array([[.5,5,3,5,10],[0,.5,5,1,5],[0,0,.5,5,5],[0,0,0,.5,5],[0,0,0,0,.5]])
+    n_test =  n_test + n_test.T
 
-    a, b, r, Q = richnoisy(n_test,test)
+    a, b, r, Q , itr = rich_noisy(n_test,test)
+    
+    #manually check results
+    np.random.seed(505)
+    b,r,a =  np.sort(np.random.rand(3))
+    #b = .01
+    alist = [a]
+    blist = [b]
+    rlist = [r]
+
+    q = q_step(N,E,alist[0],blist[0],rlist[0])
+    
+    for x in range(100):
+        a, b, r = abr_step(N,E,q)
+        alist.append(a)
+        blist.append(b)
+        rlist.append(r)
+        q = q_step(N,E,a,b,r)
+    plt.plot(range(101),rlist)
+    
+    
         
     test = np.genfromtxt('C:\\\\users\\cabaniss\\documents\\projects\\code\\test_RichNoisy.csv',delimiter=',')
     test[0,0] = 0
